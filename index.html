@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worksheet Wizard</title>
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --primary-light: #E3F2FD;
+            --primary-dark: #1976D2;
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-radius: 8px;
+            --spacing: 20px;
+            --shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 15px var(--spacing);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .logo svg {
+            margin-right: 10px;
+        }
+        
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing);
+            display: flex;
+            gap: var(--spacing);
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            box-shadow: var(--shadow);
+        }
+        
+        .config-panel {
+            flex: 1;
+        }
+        
+        .preview-panel {
+            flex: 2;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .operation-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .operation-btn {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .operation-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+        
+        /* Worksheet Styles */
+        .worksheet {
+            background-color: white;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+        }
+        
+        .worksheet-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .worksheet-instructions {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 10px;
+            background-color: var(--primary-light);
+            border-radius: 4px;
+        }
+        
+        .student-info div {
+            display: flex;
+            align-items: center;
+        }
+        
+        .student-info svg {
+            margin-right: 8px;
+        }
+        
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .problem {
+            padding: 15px;
+            background-color: var(--primary-light);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .problem-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .problem-content {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .blank-line {
+            display: inline-block;
+            width: 80px;
+            height: 1px;
+            border-bottom: 1px solid #333;
+            margin: 0 5px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            header, .config-panel, .action-buttons {
+                display: none;
+            }
+            
+            body, .container, .preview-panel {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                display: block;
+            }
+            
+            .worksheet {
+                box-shadow: none;
+                padding: 20px;
+            }
+            
+            .preview-panel {
+                box-shadow: none;
+            }
+            
+            @page {
+                margin: 0.5cm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.06 9L15 9.94L5.92 19H5V18.08L14.06 9ZM17.66 3C17.41 3 17.15 3.1 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04C21.1 6.65 21.1 6 20.71 5.63L18.37 3.29C18.17 3.09 17.92 3 17.66 3ZM14.06 6.19L3 17.25V21H6.75L17.81 9.94L14.06 6.19Z" fill="white"/>
+            </svg>
+            <span>WorksheetWizard</span>
+        </div>
+        <nav>
+            <a href="#">Worksheets</a>
+            <a href="#">Lesson Plans</a>
+            <a href="#">Help</a>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <div class="panel config-panel">
+            <h2>Math Worksheet Generator</h2>
+            
+            <div class="form-group">
+                <label>Worksheet Type</label>
+                <div class="operation-buttons">
+                    <div class="operation-btn" data-op="addition">Addition</div>
+                    <div class="operation-btn" data-op="subtraction">Subtraction</div>
+                    <div class="operation-btn active" data-op="division">Division</div>
+                    <div class="operation-btn" data-op="multiplication">Multiplication</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="worksheet-title">Worksheet Title</label>
+                <input type="text" id="worksheet-title" value="Division Practice">
+            </div>
+            
+            <div class="form-group">
+                <label for="min-number">Min Number</label>
+                <input type="number" id="min-number" min="1" value="1">
+            </div>
+            
+            <div class="form-group">
+                <label for="max-number">Max Number</label>
+                <input type="number" id="max-number" min="1" value="10">
+            </div>
+            
+            <div class="form-group">
+                <label for="num-problems">Number of Problems</label>
+                <input type="number" id="num-problems" min="1" max="100" value="20">
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="allow-remainders">
+                    <label for="allow-remainders">Allow Remainders</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="include-answer-key" checked>
+                    <label for="include-answer-key">Include Answer Key</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="student-name-field">Student Name Field</label>
+                <select id="student-name-field">
+                    <option value="name-line">Name Line</option>
+                    <option value="name-boxes">Name Boxes</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+            
+            <button id="generate-btn">Generate Worksheet</button>
+        </div>
+        
+        <div class="panel preview-panel">
+            <h2>Worksheet Preview</h2>
+            
+            <div class="action-buttons">
+                <button id="print-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 5px;">
+                        <path d="M19 8H5C3.34 8 2 9.34 2 11V17H6V21H18V17H22V11C22 9.34 20.66 8 19 8ZM16 19H8V14H16V19ZM19 12C18.45 12 18 11.55 18 11C18 10.45 18.45 10 19 10C19.55 10 20 10.45 20 11C20 11.55 19.55 12 19 12ZM18 3H6V7H18V3Z" fill="white"/>
+                    </svg>
+                    Print
+                </button>
+                <button id="download-btn" class="btn-outline">Download PDF</button>
+            </div>
+            
+            <div class="worksheet" id="worksheet-container">
+                <div class="worksheet-title">Division Practice</div>
+                <div class="worksheet-instructions">Solve the following division problems.</div>
+                
+                <div class="student-info">
+                    <div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="#2196F3"/>
+                        </svg>
+                        Name: _________________________
+                    </div>
+                    <div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H18V1H16V3H8V1H6V3H5C3.89 3 3.01 3.9 3.01 5L3 19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V8H19V19ZM7 10H12V15H7V10Z" fill="#2196F3"/>
+                        </svg>
+                        Date: _________________________
+                    </div>
+                </div>
+                
+                <div class="problems-grid" id="problems-container">
+                    <!-- Problems will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Operation selection
+            const operationButtons = document.querySelectorAll('.operation-btn');
+            operationButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    operationButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    generateWorksheet();
+                });
+            });
+            
+            // Initial worksheet generation
+            generateWorksheet();
+            
+            // Event listeners
+            document.getElementById('generate-btn').addEventListener('click', generateWorksheet);
+            document.getElementById('print-btn').addEventListener('click', printWorksheet);
+            document.getElementById('download-btn').addEventListener('click', downloadPDF);
+            
+            // Input change listeners
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', generateWorksheet);
+            });
+            
+            function getSelectedOperation() {
+                const activeButton = document.querySelector('.operation-btn.active');
+                return activeButton ? activeButton.dataset.op : 'division';
+            }
+            
+            function generateWorksheet() {
+                const operation = getSelectedOperation();
+                const title = document.getElementById('worksheet-title').value;
+                const minNumber = parseInt(document.getElementById('min-number').value) || 1;
+                const maxNumber = parseInt(document.getElementById('max-number').value) || 10;
+                const numProblems = parseInt(document.getElementById('num-problems').value) || 20;
+                const allowRemainders = document.getElementById('allow-remainders').checked;
+                
+                // Update worksheet title
+                document.querySelector('.worksheet-title').textContent = title;
+                
+                // Generate problems
+                const problems = generateProblems(operation, minNumber, maxNumber, numProblems, allowRemainders);
+                
+                // Update problems container
+                const problemsContainer = document.getElementById('problems-container');
+                problemsContainer.innerHTML = '';
+                
+                problems.forEach((problem, index) => {
+                    const problemElement = document.createElement('div');
+                    problemElement.className = 'problem';
+                    
+                    const problemNumber = document.createElement('div');
+                    problemNumber.className = 'problem-number';
+                    problemNumber.textContent = index + 1;
+                    
+                    const problemContent = document.createElement('div');
+                    problemContent.className = 'problem-content';
+                    
+                    const operatorSymbol = getOperatorSymbol(operation);
+                    
+                    problemContent.innerHTML = `${problem.num1} ${operatorSymbol} ${problem.num2} = <span class="blank-line"></span>`;
+                    
+                    problemElement.appendChild(problemNumber);
+                    problemElement.appendChild(problemContent);
+                    
+                    problemsContainer.appendChild(problemElement);
+                });
+            }
+            
+            function getOperatorSymbol(operation) {
+                switch(operation) {
+                    case 'addition': return '+';
+                    case 'subtraction': return '−';
+                    case 'multiplication': return '×';
+                    case 'division': return '÷';
+                    default: return '÷';
+                }
+            }
+            
+            function generateProblems(operation, min, max, count, allowRemainders) {
+                const problems = [];
+                const usedProblems = new Set(); // To ensure no duplicates
+                
+                while(problems.length < count) {
+                    let num1, num2;
+                    
+                    if (operation === 'division') {
+                        // Make sure both operands stay within the min-max range
+                        num2 = getRandomInt(min, max);
+                        
+                        if (allowRemainders) {
+                            // For problems with remainders, both numbers should be within range
+                            num1 = getRandomInt(min, max);
+                        } else {
+                            // For problems without remainders, ensure divisible result
+                            // by multiplying by a factor but keeping result within max
+                            const possibleMultipliers = [];
+                            for (let i = 1; i <= Math.floor(max / num2); i++) {
+                                possibleMultipliers.push(i);
+                            }
+                            
+                            if (possibleMultipliers.length > 0) {
+                                const multiplierIndex = Math.floor(Math.random() * possibleMultipliers.length);
+                                num1 = num2 * possibleMultipliers[multiplierIndex];
+                            } else {
+                                // Fallback if no valid multiplier
+                                num1 = num2;
+                            }
+                        }
+                    } else if (operation === 'subtraction') {
+                        num1 = getRandomInt(min, max);
+                        num2 = getRandomInt(min, num1); // Ensure num2 <= num1 to avoid negative results
+                    } else {
+                        num1 = getRandomInt(min, max);
+                        num2 = getRandomInt(min, max);
+                    }
+                    
+                    // Create unique problem identifier based on the specific operation
+                    // For division, the order matters (8÷4 is different from 4÷8)
+                    const problemString = `${num1},${num2}`;
+                    
+                    // Check if this exact problem has already been used
+                    if (!usedProblems.has(problemString)) {
+                        usedProblems.add(problemString);
+                        problems.push({ num1, num2 });
+                    }
+                }
+                
+                return problems;
+            }
+            
+            function getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            
+            function printWorksheet() {
+                window.print();
+            }
+            
+            function downloadPDF() {
+                alert('PDF download functionality would be implemented here. In a real application, this would convert the worksheet to PDF format and download it.');
+                // In a real implementation, you might use libraries like jsPDF or server-side PDF generation
+            }
+        });
+    </script>
+</body>
+</html>
